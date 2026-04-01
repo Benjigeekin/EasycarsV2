@@ -111,6 +111,14 @@ app.get('/api/bookings', (req, res) => {
   });
 });
 
+// Serve frontend in production
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`EasyCars Backend running on http://localhost:${PORT}`);
 });
