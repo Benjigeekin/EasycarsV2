@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log('[VERSION] Server version: Diagnostic Logs v3 (File size: ' + require('fs').statSync(__filename).size + ')');
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
@@ -33,18 +34,25 @@ const fs = require('fs');
 
 // Configure Nodemailer Transporter
 const getSMTPPass = () => {
+  console.log('[DEBUG] Checking SMTP password source...');
   if (process.env.SMTP_PASS && process.env.SMTP_PASS !== 'paste_your_16_character_app_password_here') {
+    console.log('[DEBUG] Using SMTP_PASS from environment variables.');
     return process.env.SMTP_PASS;
   }
 
   // Try reading from Render Secret File
   const secretPath = '/etc/secrets/Easycars_Email_confirmation';
+  console.log(`[DEBUG] SMTP_PASS env missing. Checking for secret file at: ${secretPath}`);
   if (fs.existsSync(secretPath)) {
     try {
-      return fs.readFileSync(secretPath, 'utf8').trim();
+      const pass = fs.readFileSync(secretPath, 'utf8').trim();
+      console.log(`[DEBUG] Successfully read secret file. Length: ${pass.length} characters.`);
+      return pass;
     } catch (err) {
-      console.error('Error reading Render secret file:', err.message);
+      console.error('[ERROR] Error reading Render secret file:', err.message);
     }
+  } else {
+    console.warn(`[WARN] Secret file NOT found at ${secretPath}`);
   }
   return null;
 };
@@ -65,7 +73,8 @@ const sendBookingEmail = async (bookingData) => {
       return;
     }
 
-    await transporter.sendMail({
+    console.log('[AUTOMATION] Attempting to send email...');
+    const info = await transporter.sendMail({
       from: `"EasyCars System" <${process.env.SMTP_USER || 'biteksgroup@gmail.com'}>`,
       to: 'biteksgroup@gmail.com',
       subject: 'New Booking Request Received',
@@ -75,9 +84,9 @@ const sendBookingEmail = async (bookingData) => {
         `Rental Window: ${bookingData.startDate} to ${bookingData.endDate}\n\n` +
         `Please reach out to finalize the reservation.`
     });
-    console.log(`[AUTOMATION] Successfully triggered email for booking: ${bookingData.customerName}`);
+    console.log(`[AUTOMATION] Successfully triggered email for booking: ${bookingData.customerName}. Message ID: ${info.messageId}`);
   } catch (error) {
-    console.error('[AUTOMATION] Failed to execute email trigger:', error);
+    console.error('[AUTOMATION] Failed to execute email trigger. Full error:', error);
   }
 };
 
