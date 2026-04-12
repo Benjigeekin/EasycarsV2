@@ -3,7 +3,6 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Initialize SQLite DB (Relative to root)
+// Initialize SQLite DB
 const db = new sqlite3.Database('./bookings.db', (err) => {
   if (err) {
     console.error('Error connecting to SQLite database:', err.message);
@@ -57,6 +56,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// TRIGGER ON CREATE HELPER:
 const sendBookingEmail = async (bookingData) => {
   try {
     const smtpPass = getSMTPPass();
@@ -81,15 +81,18 @@ const sendBookingEmail = async (bookingData) => {
   }
 };
 
+
 // -----------------------------------------
 // POST Endpoint (Trigger: On Create)
 // -----------------------------------------
 app.post('/api/bookings', (req, res) => {
   const { customerName, carModel, startDate, endDate } = req.body;
+
   if (!customerName || !carModel || !startDate || !endDate) {
     return res.status(400).json({ error: 'Missing required fields in payload' });
   }
 
+  // 1. Commit to Database
   db.run(
     `INSERT INTO Bookings (customerName, carModel, startDate, endDate) VALUES (?, ?, ?, ?)`,
     [customerName, carModel, startDate, endDate],
@@ -97,9 +100,23 @@ app.post('/api/bookings', (req, res) => {
       if (err) {
         return res.status(500).json({ error: 'Failed to commit booking to database', details: err.message });
       }
+
       const newBookingId = this.lastID;
-      sendBookingEmail({ customerName, carModel, startDate, endDate });
-      res.status(201).json({ message: 'Booking request registered', bookingId: newBookingId });
+      console.log(`Successfully committed booking ${newBookingId} to database.`);
+
+      // 2. TRIGGER SERVER-SIDE EMAIL AUTOMATION IMMEDIATELY AFTER COMMIT
+      sendBookingEmail({
+        customerName,
+        carModel,
+        startDate,
+        endDate
+      });
+
+      // Respond to frontend
+      res.status(201).json({
+        message: 'Booking request registered',
+        bookingId: newBookingId
+      });
     }
   );
 });
@@ -114,13 +131,14 @@ app.get('/api/bookings', (req, res) => {
   });
 });
 
-// Serve frontend in production (relative to root)
-app.use(express.static(path.join(__dirname, './dist')));
+// Serve frontend in production
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../dist')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, './dist/index.html'));
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`EasyCars Full-Stack running on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`EasyCars Backend running on http://localhost:${PORT}`);
 });
