@@ -9,6 +9,7 @@ import LongTerm from './components/LongTerm';
 import FullFleet from './components/FullFleet';
 import RateModal from './components/RateModal';
 import { Contacts } from './components/features/contacts/Contacts';
+import BrandMarquee from './components/BrandMarquee';
 
 function App() {
   const [activePage, setActivePage] = useState('home');
@@ -20,6 +21,7 @@ function App() {
       {activePage === 'home' && (
         <>
           <Hero />
+          <BrandMarquee />
           <WhyChoose />
           <Fleet onRent={setSelectedCar} onNavigate={setActivePage} />
           <Testimonial />
