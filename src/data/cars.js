@@ -41,7 +41,7 @@ export const allCars = [
     "fuel": "Petrol",
     "consume": "5 L",
     "badge": "New 2024",
-    "img": "https://easycars.lv/ad_ecars/uploads//lexus.jpg"
+    "img": "/images/cars/lexusES300H_ready.png"
   },
   {
     "name": "BMW X4 X-DRIVE",
@@ -52,7 +52,7 @@ export const allCars = [
     "fuel": "Petrol",
     "consume": "7 L",
     "badge": "",
-    "img": "https://easycars.lv/ad_ecars/uploads//bmw.png"
+    "img": "/images/cars/BMW X4_ready.png"
   },
   {
     "name": "BMW 7 LONG",
@@ -63,7 +63,7 @@ export const allCars = [
     "fuel": "Petrol",
     "consume": "10 L",
     "badge": "Premium",
-    "img": "https://easycars.lv/ad_ecars/uploads//2023-bmw-7-series-main.png"
+    "img": "/images/cars/BMW 7 Long_ready.png"
   },
   {
     "name": "FORD EXPLORER 7 seats",
@@ -74,7 +74,7 @@ export const allCars = [
     "fuel": "Petrol",
     "consume": "9 L",
     "badge": "",
-    "img": "https://easycars.lv/ad_ecars/uploads//Ford%20explorer%20black/5454.jpg"
+    "img": "/images/cars/Ford Explorer_ready.png"
   },
   {
     "name": "MERCEDES-BENZ E CLASS",
@@ -129,7 +129,7 @@ export const allCars = [
     "fuel": "Hybrid",
     "consume": "6 L",
     "badge": "New 2024",
-    "img": "https://easycars.lv/ad_ecars/uploads//rav-4.png"
+    "img": "/images/cars/Toyota Rav4_ready.png"
   },
   {
     "name": "SKODA KODIAQ",
@@ -338,7 +338,7 @@ export const allCars = [
     "fuel": "Petrol",
     "consume": "6 L",
     "badge": "New 2025",
-    "img": "https://easycars.lv/ad_ecars/uploads//sandero-step.png"
+    "img": "/images/cars/Dacia Sandero_ready.png"
   },
   {
     "name": "DACIA SANDERO",
@@ -349,6 +349,6 @@ export const allCars = [
     "fuel": "Petrol",
     "consume": "6 L",
     "badge": "New 2024",
-    "img": "https://easycars.lv/ad_ecars/uploads//sandero.png"
+    "img": "/images/cars/Dacia Sandero_ready.png"
   }
 ];
